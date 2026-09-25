@@ -1,0 +1,194 @@
+// This is your Prisma schema file.
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Change to "postgresql" for production
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  businesses    Business[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Business {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  slug            String   @unique
+  category        String
+  description     String?
+  logo            String?
+  coverImage      String?
+  location        String?
+  phone           String?
+  whatsapp        String?
+  instagram       String?
+  tiktok          String?
+  facebook        String?
+  website         String?
+  openingHours    String?  // JSON string
+  brandColors     String?  // JSON string
+  brandVoice      String?
+  products        String?  // JSON array of {name, description, price, image}
+  onboardingDone  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contents        Content[]
+  calendarItems   CalendarItem[]
+  customers       Customer[]
+  integrations    Integration[]
+  analytics       AnalyticsEvent[]
+}
+
+model Content {
+  id          String   @id @default(cuid())
+  businessId  String
+  type        String   // caption, post, whatsapp, menu, story_idea, video_script, etc.
+  platform    String?  // instagram, facebook, tiktok, whatsapp, general
+  title       String?
+  body        String
+  status      String   @default("draft") // draft, scheduled, published, archived
+  scheduledAt DateTime?
+  publishedAt DateTime?
+  tags        String?  // JSON array
+  metadata    String?  // JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  calendarItems CalendarItem[]
+}
+
+model CalendarItem {
+  id          String   @id @default(cuid())
+  businessId  String
+  contentId   String?
+  title       String
+  date        DateTime
+  platform    String?
+  status      String   @default("planned")
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  content     Content? @relation(fields: [contentId], references: [id])
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  businessId  String
+  name        String
+  email       String?
+  phone       String?
+  whatsapp    String?
+  notes       String?
+  status      String   @default("lead") // lead, customer, vip, inactive
+  tags        String?  // JSON
+  lastContact DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  interactions Interaction[]
+}
+
+model Interaction {
+  id          String   @id @default(cuid())
+  customerId  String
+  type        String   // note, followup, message, order
+  body        String
+  createdAt   DateTime @default(now())
+
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
+
+model Integration {
+  id          String   @id @default(cuid())
+  businessId  String
+  provider    String   // buffer, canva, gamma, hubspot
+  accessToken String?
+  refreshToken String?
+  expiresAt   DateTime?
+  metadata    String?  // JSON
+  connectedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, provider])
+}
+
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  businessId  String
+  type        String   // post_published, engagement, reach, etc.
+  platform    String?
+  value       Float    @default(1)
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  category    String   // food, shawarma, salon, barber, fashion, retail, service
+  name        String
+  description String?
+  content     String   // JSON or markdown templates
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
