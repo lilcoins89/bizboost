@@ -52,12 +52,10 @@ const features = [
 ];
 
 const categories = [
-  "Shawarma &
-  Grilled Chicken",
+  "Shawarma & Grilled Chicken",
   "Restaurants",
   "Salons & Barbers",
-  "Fashion &
-  Retail",
+  "Fashion & Retail",
   "Bakeries",
   "Service Businesses",
 ];
