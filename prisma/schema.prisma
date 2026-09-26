@@ -1,12 +1,13 @@
-// This is your Prisma schema file.
-// Learn more: https://pris.ly/d/prisma-schema
+// BizBoost Prisma schema
+// Local: use DATABASE_URL="file:./dev.db" and provider = "sqlite"
+// Production (Vercel): use PostgreSQL (Neon/Supabase) and provider = "postgresql"
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite" // Change to "postgresql" for production
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -76,10 +77,10 @@ model Business {
   tiktok          String?
   facebook        String?
   website         String?
-  openingHours    String?  // JSON string
-  brandColors     String?  // JSON string
+  openingHours    String?
+  brandColors     String?
   brandVoice      String?
-  products        String?  // JSON array of {name, description, price, image}
+  products        String?
   onboardingDone  Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -95,19 +96,19 @@ model Business {
 model Content {
   id          String   @id @default(cuid())
   businessId  String
-  type        String   // caption, post, whatsapp, menu, story_idea, video_script, etc.
-  platform    String?  // instagram, facebook, tiktok, whatsapp, general
+  type        String
+  platform    String?
   title       String?
   body        String
-  status      String   @default("draft") // draft, scheduled, published, archived
+  status      String   @default("draft")
   scheduledAt DateTime?
   publishedAt DateTime?
-  tags        String?  // JSON array
-  metadata    String?  // JSON
+  tags        String?
+  metadata    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  business      Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
   calendarItems CalendarItem[]
 }
 
@@ -123,8 +124,8 @@ model CalendarItem {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  content     Content? @relation(fields: [contentId], references: [id])
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  content  Content? @relation(fields: [contentId], references: [id])
 }
 
 model Customer {
@@ -135,60 +136,60 @@ model Customer {
   phone       String?
   whatsapp    String?
   notes       String?
-  status      String   @default("lead") // lead, customer, vip, inactive
-  tags        String?  // JSON
+  status      String   @default("lead")
+  tags        String?
   lastContact DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  business     Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
   interactions Interaction[]
 }
 
 model Interaction {
-  id          String   @id @default(cuid())
-  customerId  String
-  type        String   // note, followup, message, order
-  body        String
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  customerId String
+  type       String
+  body       String
+  createdAt  DateTime @default(now())
 
-  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }
 
 model Integration {
-  id          String   @id @default(cuid())
-  businessId  String
-  provider    String   // buffer, canva, gamma, hubspot
-  accessToken String?
+  id           String    @id @default(cuid())
+  businessId   String
+  provider     String
+  accessToken  String?
   refreshToken String?
-  expiresAt   DateTime?
-  metadata    String?  // JSON
-  connectedAt DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  expiresAt    DateTime?
+  metadata     String?
+  connectedAt  DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   @@unique([businessId, provider])
 }
 
 model AnalyticsEvent {
-  id          String   @id @default(cuid())
-  businessId  String
-  type        String   // post_published, engagement, reach, etc.
-  platform    String?
-  value       Float    @default(1)
-  metadata    String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(cuid())
+  businessId String
+  type       String
+  platform   String?
+  value      Float    @default(1)
+  metadata   String?
+  createdAt  DateTime @default(now())
 
-  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 }
 
 model Template {
   id          String   @id @default(cuid())
-  category    String   // food, shawarma, salon, barber, fashion, retail, service
+  category    String
   name        String
   description String?
-  content     String   // JSON or markdown templates
+  content     String
   isPublic    Boolean  @default(true)
   createdAt   DateTime @default(now())
 }
