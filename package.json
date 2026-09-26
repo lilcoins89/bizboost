@@ -1,10 +1,14 @@
 {
   "name": "bizboost",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "AI-powered marketing and growth workspace for small and local businesses",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
