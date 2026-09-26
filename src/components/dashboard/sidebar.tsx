@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   Menu,
   X,
+  Presentation,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ const navItems = [
   { href: "/dashboard/calendar", label: "Content Calendar", icon: Calendar },
   { href: "/dashboard/social", label: "Social Media", icon: Share2 },
   { href: "/dashboard/designs", label: "Designs", icon: Palette },
+  { href: "/dashboard/presentations", label: "Presentations", icon: Presentation },
   { href: "/dashboard/website", label: "Business Website", icon: Globe },
   { href: "/dashboard/customers", label: "Customers", icon: Users },
   { href: "/dashboard/crm", label: "CRM", icon: Contact },
@@ -105,7 +107,6 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile toggle */}
       <Button
         variant="outline"
         size="icon"
@@ -115,7 +116,6 @@ export function Sidebar() {
         <Menu className="h-4 w-4" />
       </Button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -123,7 +123,6 @@ export function Sidebar() {
         />
       )}
 
-      {/* Mobile sidebar */}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-background transition-transform lg:hidden",
@@ -141,7 +140,6 @@ export function Sidebar() {
         <NavContent />
       </aside>
 
-      {/* Desktop sidebar */}
       <aside
         className={cn(
           "hidden lg:flex flex-col border-r bg-background transition-all duration-300",
