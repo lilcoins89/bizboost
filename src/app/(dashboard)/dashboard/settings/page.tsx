@@ -6,45 +6,50 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Link2, Check, ExternalLink } from "lucide-react";
+import { Check, Share2, Palette, Presentation, Users } from "lucide-react";
+import { toast } from "sonner";
 
-const integrations = [
+const builtInFeatures = [
   {
-    id: "buffer",
-    name: "Buffer",
+    id: "social",
+    name: "Social scheduling",
     description: "Schedule organic posts to Instagram, Facebook, TikTok & LinkedIn",
-    connected: false,
-    docs: "https://buffer.com/developers",
+    icon: Share2,
+    href: "/dashboard/social",
   },
   {
-    id: "canva",
-    name: "Canva",
+    id: "designs",
+    name: "Design studio",
     description: "Create flyers, menus and social graphics",
-    connected: false,
-    docs: "https://www.canva.com/developers/",
+    icon: Palette,
+    href: "/dashboard/designs",
   },
   {
-    id: "gamma",
-    name: "Gamma",
-    description: "Auto-generate presentations, menus and proposals",
-    connected: false,
-    docs: "https://gamma.app",
+    id: "presentations",
+    name: "Presentations & documents",
+    description: "Menus, proposals and business presentations",
+    icon: Presentation,
+    href: "/dashboard/presentations",
   },
   {
-    id: "hubspot",
-    name: "HubSpot",
-    description: "Full CRM sync for contacts and deals",
-    connected: false,
-    docs: "https://developers.hubspot.com",
+    id: "crm",
+    name: "Customer CRM",
+    description: "Contacts, notes and AI follow-ups",
+    icon: Users,
+    href: "/dashboard/crm",
   },
 ];
 
 export default function SettingsPage() {
+  function saveProfile() {
+    toast.success("Business profile saved");
+  }
+
   return (
     <>
       <DashboardHeader
         title="Settings"
-        description="Business profile, brand and integrations"
+        description="Business profile and brand — powers all AI and features"
       />
 
       <div className="p-4 lg:p-6 space-y-6 max-w-3xl">
@@ -52,7 +57,9 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Business profile</CardTitle>
-            <CardDescription>This data powers all AI content personalization</CardDescription>
+            <CardDescription>
+              This data personalizes AI content, designs, and your public mini website.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
@@ -100,62 +107,60 @@ export default function SettingsPage() {
                 className="mt-1"
               />
             </div>
-            <Button>Save profile</Button>
+            <div>
+              <label className="text-sm font-medium">Public page slug</label>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">bizboost.com/</span>
+                <Input defaultValue="bigbite" className="max-w-[160px]" />
+              </div>
+            </div>
+            <Button onClick={saveProfile}>Save profile</Button>
           </CardContent>
         </Card>
 
-        {/* Integrations */}
+        {/* Built-in features (not integrations) */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Integrations</CardTitle>
+            <CardTitle className="text-base">Built-in features</CardTitle>
             <CardDescription>
-              Connect Buffer, Canva, Gamma and HubSpot. All organic — no paid ads.
+              These work automatically inside BizBoost. No external accounts to connect.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {integrations.map((int) => (
+          <CardContent className="space-y-3">
+            {builtInFeatures.map((f) => (
               <div
-                key={int.id}
+                key={f.id}
                 className="flex items-start justify-between gap-4 rounded-lg border p-4"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-sm">{int.name}</p>
-                    {int.connected ? (
-                      <Badge variant="success" className="text-[10px] gap-1">
-                        <Check className="h-3 w-3" /> Connected
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-[10px]">
-                        Not connected
-                      </Badge>
-                    )}
+                <div className="flex items-start gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <f.icon className="h-4 w-4 text-primary" />
                   </div>
-                  <p className="text-xs text-muted-foreground">{int.description}</p>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-sm">{f.name}</p>
+                      <Badge variant="success" className="text-[10px] gap-1">
+                        <Check className="h-3 w-3" /> Included
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">{f.description}</p>
+                  </div>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={int.docs} target="_blank" rel="noopener">
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  </Button>
-                  <Button size="sm" variant={int.connected ? "secondary" : "default"} className="gap-1.5">
-                    <Link2 className="h-3.5 w-3.5" />
-                    {int.connected ? "Manage" : "Connect"}
-                  </Button>
-                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <a href={f.href}>Open</a>
+                </Button>
               </div>
             ))}
           </CardContent>
         </Card>
 
-        {/* Environment note */}
         <Card className="border-dashed">
           <CardContent className="py-6 text-sm text-muted-foreground space-y-2">
-            <p className="font-medium text-foreground">Required environment variables</p>
+            <p className="font-medium text-foreground">How it works</p>
             <p>
-              See <code className="text-xs bg-muted px-1 rounded">.env.example</code> for Buffer,
-              Canva, Gamma, HubSpot and AI API keys. Connection flows will use these securely.
+              Social scheduling, designs, presentations and CRM are native BizBoost features.
+              Platform credentials (where needed) are managed by BizBoost — you never connect
+              Buffer, Canva, Gamma or HubSpot yourself.
             </p>
           </CardContent>
         </Card>
