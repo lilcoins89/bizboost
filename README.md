@@ -2,122 +2,162 @@
 
 **AI-powered marketing & business growth workspace for small and local businesses.**
 
-Shawarma vendors • Grilled chicken • Restaurants • Salons • Barbers • Fashion • Retail • Service businesses
+Shawarma vendors · Grilled chicken · Restaurants · Salons · Barbers · Fashion · Retail · Service businesses
 
 > **This is NOT an advertising platform.**  
-> Focus: Organic content • Social media • Design • Customers • CRM • Mini websites • Content planning • AI assistance
+> Focus: Content · Social · Design · CRM · Mini websites · Organic growth · AI assistance
+
+**Built-in features (no user account linking):** Social scheduling · Design studio · Presentations · CRM
 
 ---
 
 ## Features
 
-- **Business Profile** – Complete brand identity, products, hours, social links
-- **AI Marketing Content Generator** – Instagram, Facebook, TikTok, WhatsApp, menus, announcements
-- **Content Calendar** – Plan, schedule, drag & drop
-- **Social Media (Buffer)** – Organic scheduling for IG, FB, TikTok, LinkedIn
-- **Canva Design Workflow** – Flyers, menus, posts
-- **Mini Website / Digital Menu** – `bizboost.com/yourbusiness`
-- **AI Website Content** – Descriptions, FAQs, about sections
-- **Customer CRM** (HubSpot or built-in)
-- **Customer Follow-ups** – Thank you, re-engagement, birthday messages (with consent)
-- **AI Business Assistant** – Chat for content plans, ideas, copy
-- **Content Repurposing** – One idea → many formats
-- **Analytics** – Organic metrics only
-- **Content Library** – Searchable history + templates
-- **Business Templates** – Food, salon, fashion, service, etc.
-- **Gamma Integration** – Presentations, menus, proposals
-- **Modern Dashboard** – Clean, responsive, dark/light mode, PWA
+| Feature | Description |
+|---------|-------------|
+| Business Profile | Brand, products, hours, social links |
+| AI Content Generator | Instagram, TikTok, WhatsApp, menus, promos |
+| Content Calendar | Plan and schedule organic posts |
+| Social Media | Built-in organic scheduler |
+| Design Studio | Flyers, menus, social graphics |
+| Presentations | Menus, proposals, decks |
+| Mini Website | Public page e.g. `/bigbite` |
+| CRM | Contacts, notes, AI follow-ups (user-approved send) |
+| AI Assistant | Chat for plans, ideas, copy |
+| Analytics | Organic metrics only |
+| Content Library | Searchable history + templates |
+| PWA | Installable, dark/light mode |
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS + shadcn/ui |
-| Auth | NextAuth.js + Prisma Adapter |
-| Database | Prisma + PostgreSQL (or SQLite for local) |
-| State | Zustand |
-| Forms | React Hook Form + Zod |
-| Themes | next-themes |
-| PWA | next-pwa ready |
-| Integrations | Buffer, Canva, Gamma, HubSpot |
+- **Next.js 15** (App Router) · TypeScript · Tailwind · shadcn/ui
+- **Prisma** + PostgreSQL (Neon/Supabase on Vercel)
+- **next-themes** · Sonner · Lucide · Zod
 
 ---
 
-## Quick Start
+## Local development
 
 ```bash
 git clone https://github.com/lilcoins89/bizboost.git
 cd bizboost
 npm install
 cp .env.example .env
-# Edit .env with your keys
+```
+
+Edit `.env`:
+
+```env
+DATABASE_URL="postgresql://..."   # or use Neon free tier
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="paste-a-long-random-string"
+```
+
+Then:
+
+```bash
 npx prisma db push
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
 
----
-
-## Environment Variables
-
-See `.env.example` for the full list.
-
-Required for core:
-- `DATABASE_URL`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
-
-Optional integrations:
-- Buffer, Canva, Gamma, HubSpot, OpenAI/Grok compatible API for AI
+| Route | Purpose |
+|-------|--------|
+| `/` | Landing |
+| `/login` · `/register` | Auth (demo mode) |
+| `/onboarding` | 6-step setup |
+| `/dashboard` | Full workspace |
+| `/bigbite` | Demo public mini-site |
 
 ---
 
-## Project Structure
+## Deploy on Vercel
 
-```
-src/
-  app/
-    (auth)/          # Login, register, onboarding
-    (dashboard)/     # Protected dashboard routes
-    (public)/        # Public mini-websites /[slug]
-    api/             # API routes
-  components/
-    ui/              # shadcn components
-    dashboard/       # Dashboard specific
-    ai/              # AI chat & generators
-  lib/
-    auth.ts
-    prisma.ts
-    ai.ts            # Content generation logic
-    integrations/    # Buffer, Canva, etc.
-  types/
-prisma/
-  schema.prisma
+### 1. Import the repo
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/lilcoins89/bizboost)
+
+Or:
+
+```bash
+npm i -g vercel
+vercel
 ```
 
+### 2. Database (required)
+
+Use **Neon** or **Supabase** (free PostgreSQL):
+
+1. Create a project → copy connection string
+2. In Vercel → Project → Settings → Environment Variables:
+
+| Variable | Value |
+|----------|--------|
+| `DATABASE_URL` | `postgresql://...` (Neon/Supabase) |
+| `NEXTAUTH_SECRET` | Random 32+ char string |
+| `NEXTAUTH_URL` | `https://your-app.vercel.app` |
+| `NEXT_PUBLIC_APP_URL` | Same as above |
+| `AI_API_KEY` | Optional (Grok/OpenAI) |
+| `AI_BASE_URL` | Optional e.g. `https://api.x.ai/v1` |
+| `AI_MODEL` | Optional e.g. `grok-3` |
+
+### 3. Deploy
+
+```bash
+vercel --prod
+```
+
+Or push to `main` — Vercel builds automatically via `vercel.json`:
+
+- **Build:** `prisma generate && next build`
+- **Framework:** Next.js
+
+After first deploy, run migrations once (Vercel CLI or Neon SQL):
+
+```bash
+npx prisma db push
+```
+
+(Use the same `DATABASE_URL` as production.)
+
 ---
 
-## Integrations
+## Environment variables
 
-| Service | Purpose | Status |
-|---------|---------|--------|
-| Buffer | Organic social scheduling | Connection flow + API ready |
-| Canva | Design creation | Connection + transfer from AI content |
-| Gamma | Presentations & menus | Create from business data |
-| HubSpot | Full CRM | Optional deep integration |
-| Built-in CRM | Lightweight contacts & notes | Fully functional |
+See `.env.example`.
+
+| Key | Required | Notes |
+|-----|----------|--------|
+| `DATABASE_URL` | Yes | PostgreSQL for production |
+| `NEXTAUTH_SECRET` | Yes | `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | Yes | App URL |
+| `AI_API_KEY` | No | Enables real AI; fallbacks work without it |
+| Platform Buffer/Canva/Gamma/HubSpot keys | No | Server-side only; users never connect these |
+
+---
+
+## Project structure
+
+```
+src/app/
+  page.tsx                 # Landing
+  login/ · register/       # Auth
+  onboarding/              # Setup wizard
+  (dashboard)/dashboard/   # Overview, AI, Create, Calendar, Social,
+                           # Designs, Presentations, Website, CRM, ...
+  (public)/[slug]/         # Public mini websites
+  api/ai/generate/         # Content API
+prisma/schema.prisma
+vercel.json                # Production build config
+```
 
 ---
 
 ## License
 
 MIT — Built for small businesses that deserve great tools.
-
----
 
 Made with ❤️ for the local business community.
